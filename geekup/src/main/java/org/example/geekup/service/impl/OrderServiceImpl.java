@@ -156,6 +156,7 @@ public class OrderServiceImpl implements OrderService {
             OrderConfirmationMessage message = orderConfirmationMapper.toMessage(order);
 
             // Set additional fields that couldn't be mapped directly
+            message.setOrderId(order.getId());
             message.setUserEmail(user.getEmail());
             message.setUserName(user.getName());
             message.setShippingAddress(shippingAddress);

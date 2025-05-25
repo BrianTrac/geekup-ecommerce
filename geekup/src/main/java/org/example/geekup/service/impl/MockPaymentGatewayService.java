@@ -31,7 +31,7 @@ public class MockPaymentGatewayService implements PaymentGatewayService {
             return PaymentResult.builder()
                     .success(true)
                     .transactionId("TXN_" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
-                    .status(PaymentStatus.COMPLETED)
+                    .status(PaymentStatus.SUCCESS)
                     .gatewayResponse("Payment processed successfully")
                     .build();
         } else {
