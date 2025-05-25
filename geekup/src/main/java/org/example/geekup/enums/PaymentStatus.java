@@ -2,9 +2,10 @@ package org.example.geekup.enums;
 
 public enum PaymentStatus {
     PENDING,
-    PROCESSING,
-    COMPLETED,
+   // PROCESSING,
+    SUCCESS,
     FAILED,
     CANCELLED,
     REFUNDED,
+    TIMEOUT,
 }
