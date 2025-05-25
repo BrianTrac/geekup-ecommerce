@@ -3,6 +3,7 @@ package org.example.geekup.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.example.geekup.common.Auditable;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class OrderItem {
+public class OrderItem extends Auditable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
