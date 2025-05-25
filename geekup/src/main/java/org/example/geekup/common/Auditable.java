@@ -2,7 +2,9 @@ package org.example.geekup.common;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,6 +15,8 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
 public abstract class Auditable {
 
     @CreatedDate

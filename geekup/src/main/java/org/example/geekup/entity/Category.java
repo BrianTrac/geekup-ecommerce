@@ -2,6 +2,7 @@ package org.example.geekup.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.example.geekup.common.Auditable;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -13,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)

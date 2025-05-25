@@ -363,7 +363,6 @@ CREATE TABLE IF NOT EXISTS orders (
                         shipping_discount_amount DECIMAL(15,2) DEFAULT 0.00,
                         total_amount DECIMAL(15,2) NOT NULL,
                         order_status_id UUID NOT NULL,
-                        payment_method_id UUID,
                         voucher_id UUID,
                         notes TEXT,
                         ordered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -378,7 +377,6 @@ CREATE TABLE IF NOT EXISTS orders (
                         CONSTRAINT uq_order_number UNIQUE(order_number),
                         CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id),
                         CONSTRAINT fk_orders_status FOREIGN KEY (order_status_id) REFERENCES order_statuses(id),
-                        CONSTRAINT fk_orders_payment_method FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id),
                         CONSTRAINT fk_orders_shipping_address FOREIGN KEY (shipping_address_id) REFERENCES user_addresses(id),
                         CONSTRAINT fk_orders_voucher FOREIGN KEY (voucher_id) REFERENCES vouchers(id),
                         CONSTRAINT chk_orders_subtotal CHECK (subtotal >= 0),
@@ -428,6 +426,39 @@ CREATE TABLE IF NOT EXISTS order_fees (
                             CONSTRAINT fk_order_fees_order FOREIGN KEY (order_id) REFERENCES orders(id),
                             CONSTRAINT chk_order_fees_amount CHECK (amount >= 0)
 );
+
+-- Payments table
+CREATE TABLE IF NOT EXISTS payments (
+                                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                                        order_id UUID NOT NULL,
+                                        payment_method_id UUID NOT NULL,
+                                        amount DECIMAL(15,2) NOT NULL,
+                                        status VARCHAR(50) NOT NULL,
+                                        transaction_id VARCHAR(100),
+                                        payment_gateway VARCHAR(100),
+                                        gateway_response TEXT,
+                                        processed_at TIMESTAMP,
+                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                        created_by UUID REFERENCES users(id),
+                                        updated_by UUID REFERENCES users(id),
+                                        is_deleted BOOLEAN DEFAULT FALSE,
+                                        CONSTRAINT fk_payments_order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+                                        CONSTRAINT fk_payments_method FOREIGN KEY (payment_method_id) REFERENCES payment_methods(id),
+                                        CONSTRAINT chk_payments_amount CHECK (amount >= 0),
+                                        CONSTRAINT chk_payments_status CHECK (
+                                            status IN (
+                                                       'PENDING',
+                                                       'SUCCESS',
+                                                       'FAILED',
+                                                       'CANCELLED',
+                                                       'TIMEOUT',
+                                                       'REFUNDED'
+                                                )
+                                            ),
+                                        CONSTRAINT uq_transaction_id UNIQUE(transaction_id)
+);
+
 
 -- Trigger to ensure shipping address belongs to the order user
 CREATE OR REPLACE FUNCTION check_shipping_address_user()
@@ -493,3 +524,6 @@ CREATE INDEX idx_user_vouchers_user_id ON user_vouchers(user_id) WHERE is_delete
 
 -- Vouchers
 CREATE INDEX idx_vouchers_code ON vouchers(code) WHERE is_deleted = FALSE;
+
+-- Payments
+CREATE INDEX idx_payments_order_id ON payments(order_id) WHERE is_deleted = FALSE;

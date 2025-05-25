@@ -169,7 +169,7 @@ ON CONFLICT (method_name) DO NOTHING
     order_insert AS (
 INSERT INTO orders (
     order_number, user_id, shipping_address_id, subtotal,
-    total_amount, order_status_id, payment_method_id,
+    total_amount, order_status_id,
     ordered_at, created_at
 )
 SELECT
@@ -179,7 +179,6 @@ SELECT
     980000.00,
     980000.00,
     COALESCE(os.status_id, (SELECT id FROM order_statuses WHERE status_name = 'pending')),
-    COALESCE(pm.payment_method_id, (SELECT id FROM payment_methods WHERE method_name = 'cash')),
     CURRENT_TIMESTAMP,
     CURRENT_TIMESTAMP
 FROM user_data ud
